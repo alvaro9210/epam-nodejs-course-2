@@ -73,7 +73,20 @@ userRouter.get(
     '/user/:id',
     (req, res) => {
         const { id } = req.params;
+
         return res.json(users.filter(user => user.id == id));
+    }
+);
+
+// Create a user
+userRouter.post(
+    '/users',
+    (req, res) => {
+        const user = req.body;
+        console.log(req.body);
+        users.push(user);
+
+        return res.json(users.filter(user => !user.isDeleted));
     }
 );
 
