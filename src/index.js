@@ -65,7 +65,12 @@ userRouter.get('/', (req, res) => {
 // Get all users
 userRouter.get(
     '/users',
-    (req, res) => res.json(users.filter(user => !user.isDeleted))
+    (req, res) => {
+        const { loginSubstring, limit } = req.query;
+        const suggestedUsers = getAutoSuggestUsers(loginSubstring, limit);
+
+        return res.json(suggestedUsers.filter(user => !user.isDeleted));
+    }
 );
 
 // Get a single user
@@ -108,6 +113,20 @@ userRouter.put(
         }
     }
 );
+
+// Returns a list of user matching a specific substring in the 
+// login property.
+//
+// If no [loginSubstring] is passed, then the substring to look 
+// for will be ''.
+// If no [limit] is passed, then the limit is the whole array.
+function getAutoSuggestUsers(loginSubstring = '', limit = users.length) {
+    const filteredUsers = users.filter(
+        user => user.login.indexOf(loginSubstring) > -1
+    );
+
+    return filteredUsers.slice(0, limit);
+}
 
 app.use('/', userRouter);
 app.listen(PORT, () => console.log('server up and running'));
