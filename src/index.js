@@ -83,10 +83,29 @@ userRouter.post(
     '/users',
     (req, res) => {
         const user = req.body;
-        console.log(req.body);
         users.push(user);
 
         return res.json(users.filter(user => !user.isDeleted));
+    }
+);
+
+// Create a user
+userRouter.put(
+    '/users/:id',
+    (req, res) => {
+        const { id } = req.params;
+        const userIndex = users.findIndex(user => user.id == id);
+        if (userIndex != -1) {
+            // If user exists
+            const updatedUser = req.body;
+            updatedUser.id = id; // Avoid changing the id
+            users[userIndex] = updatedUser;
+
+            return res.json(users.filter(user => !user.isDeleted));
+        } else {
+            // If user does not exist 
+            return res.status(404).json({ status: 'failed', message: 'Not found' });
+        }
     }
 );
 
