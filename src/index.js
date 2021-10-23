@@ -1,10 +1,22 @@
 import express from "express";
+import Joi from "joi";
 
 const app = express();
 const PORT = process.env.PORT || 4200;
 const userRouter = express.Router();
 const NOT_FOUND_ERROR = { status: 'failed', message: 'Not found' };
 
+// The validation rules for the User object.
+const userSchema = Joi.object()
+    .keys({
+        id: Joi.number().required(),
+        login: Joi.string().required(),
+        password: Joi.string().alphanum().required(),
+        age: Joi.number().min(4).max(130).required(),
+        isDeleted: Joi.boolean().required(),
+    });
+
+// List of in-memory users.
 const users = [
     {
         id: 1,
@@ -87,6 +99,7 @@ userRouter.get(
 // Create a user
 userRouter.post(
     '/users',
+    validateUser(userSchema),
     (req, res) => {
         const user = req.body;
         users.push(user);
@@ -98,6 +111,7 @@ userRouter.post(
 // Create a user
 userRouter.put(
     '/users/:id',
+    validateUser(userSchema),
     (req, res) => {
         const { id } = req.params;
         const userIndex = users.findIndex(user => user.id == id);
@@ -145,6 +159,32 @@ function getAutoSuggestUsers(loginSubstring = '', limit = users.length) {
     );
 
     return filteredUsers.slice(0, limit);
+}
+
+// Validates a user following the defined userSchema from Joi.
+function validateUser(schema) {
+    return (req, res, next) => {
+        const { error } = schema.validate(req.body, {
+            abortEarly: false,
+            allowUnknown: false,
+        });
+
+        if (error) {
+            res.status(400).json(errorResponse(error.details));
+        } else {
+            next();
+        }
+    };
+}
+
+// Builds the detailed error response to be returned in validateUser.
+function errorResponse(schemaErrors) {
+    const errors = schemaErrors.map((error) => {
+        let { path, message } = error;
+        return { path, message };
+    });
+
+    return { status: 'failed', errors };
 }
 
 app.use('/', userRouter);
