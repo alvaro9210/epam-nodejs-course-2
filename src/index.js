@@ -114,6 +114,24 @@ userRouter.put(
     }
 );
 
+// Soft delete a user
+userRouter.delete(
+    '/user/:id',
+    (req, res) => {
+        const { id } = req.params;
+        const userIndex = users.findIndex(user => user.id == id && !user.isDeleted);
+        if (userIndex != -1) {
+            // If user exists
+            users[userIndex].isDeleted = true;
+
+            return res.json(users.filter(user => !user.isDeleted));
+        } else {
+            // If user does not exist 
+            return res.status(404).json({ status: 'failed', message: 'Not found' });
+        }
+    }
+);
+
 // Returns a list of user matching a specific substring in the 
 // login property.
 //
