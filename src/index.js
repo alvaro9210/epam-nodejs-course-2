@@ -5,6 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 4200;
 const userRouter = express.Router();
 const NOT_FOUND_ERROR = { status: 'failed', message: 'Not found' };
+const ACTIVE_USERS_FILTER = ACTIVE_USERS_FILTER;
 
 // The validation rules for the User object.
 const userSchema = Joi.object()
@@ -82,7 +83,7 @@ userRouter.get(
         const { loginSubstring, limit } = req.query;
         const suggestedUsers = getAutoSuggestUsers(loginSubstring, limit);
 
-        return res.json(suggestedUsers.filter(user => !user.isDeleted));
+        return res.json(suggestedUsers.filter(ACTIVE_USERS_FILTER));
     }
 );
 
@@ -104,7 +105,7 @@ userRouter.post(
         const user = req.body;
         users.push(user);
 
-        return res.json(users.filter(user => !user.isDeleted));
+        return res.json(users.filter(ACTIVE_USERS_FILTER));
     }
 );
 
@@ -121,7 +122,7 @@ userRouter.put(
             updatedUser.id = id; // Avoid changing the id
             users[userIndex] = updatedUser;
 
-            return res.json(users.filter(user => !user.isDeleted));
+            return res.json(users.filter(ACTIVE_USERS_FILTER));
         } else {
             // If user does not exist 
             return res.status(404).json(NOT_FOUND_ERROR);
@@ -139,7 +140,7 @@ userRouter.delete(
             // If user exists
             users[userIndex].isDeleted = true;
 
-            return res.json(users.filter(user => !user.isDeleted));
+            return res.json(users.filter(ACTIVE_USERS_FILTER));
         } else {
             // If user does not exist 
             return res.status(404).json(NOT_FOUND_ERROR);
