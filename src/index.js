@@ -1,5 +1,5 @@
-import express from "express";
-import Joi from "joi";
+import express from 'express';
+import Joi from 'joi';
 
 const app = express();
 const PORT = process.env.PORT || 4200;
@@ -60,10 +60,10 @@ const users = [
 app.listen(3000);
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
     res.status(200).json({
-        message: "I am using babel in NodeJS",
-        status: "success",
+        message: 'I am using babel in NodeJS',
+        status: 'success',
     });
 });
 
