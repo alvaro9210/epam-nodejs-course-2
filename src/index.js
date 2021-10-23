@@ -5,7 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 4200;
 const userRouter = express.Router();
 const NOT_FOUND_ERROR = { status: 'failed', message: 'Not found' };
-const ACTIVE_USERS_FILTER = ACTIVE_USERS_FILTER;
+const ACTIVE_USERS_FILTER = (user) => !user.isDeleted;
 
 // The validation rules for the User object.
 const userSchema = Joi.object()
