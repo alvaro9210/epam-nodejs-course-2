@@ -3,6 +3,7 @@ import express from "express";
 const app = express();
 const PORT = process.env.PORT || 4200;
 const userRouter = express.Router();
+const NOT_FOUND_ERROR = { status: 'failed', message: 'Not found' };
 
 const users = [
     {
@@ -109,7 +110,7 @@ userRouter.put(
             return res.json(users.filter(user => !user.isDeleted));
         } else {
             // If user does not exist 
-            return res.status(404).json({ status: 'failed', message: 'Not found' });
+            return res.status(404).json(NOT_FOUND_ERROR);
         }
     }
 );
@@ -127,7 +128,7 @@ userRouter.delete(
             return res.json(users.filter(user => !user.isDeleted));
         } else {
             // If user does not exist 
-            return res.status(404).json({ status: 'failed', message: 'Not found' });
+            return res.status(404).json(NOT_FOUND_ERROR);
         }
     }
 );
