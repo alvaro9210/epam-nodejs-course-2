@@ -2,6 +2,7 @@ import express from "express";
 
 const app = express();
 const PORT = process.env.PORT || 4200;
+const userRouter = express.Router();
 
 const users = [
     {
@@ -52,4 +53,29 @@ app.get("/", (req, res) => {
     });
 });
 
+// User router setup
+// Main route
+userRouter.get('/', (req, res) => {
+    res.status(200).json({
+        message: 'I am using babel in NodeJS',
+        status: 'success',
+    });
+});
+
+// Get all users
+userRouter.get(
+    '/users',
+    (req, res) => res.json(users.filter(user => !user.isDeleted))
+);
+
+// Get a single user
+userRouter.get(
+    '/user/:id',
+    (req, res) => {
+        const { id } = req.params;
+        return res.json(users.filter(user => user.id == id));
+    }
+);
+
+app.use('/', userRouter);
 app.listen(PORT, () => console.log('server up and running'));
