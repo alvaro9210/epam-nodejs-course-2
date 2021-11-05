@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import UserSchema from './models/user';
+import UserSchema from './middleware/user';
 import * as IRequests from './interfaces/IRequests';
 import IUser from './interfaces/IUser';
 
