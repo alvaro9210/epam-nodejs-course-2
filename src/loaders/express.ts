@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction, Application } from 'express';
-import { HttpError } from 'http-errors';
+import createError, { HttpError } from 'http-errors';
+import routes from '../api/routes';
 
 export default ({ app }: { app: Application }) => {
 
@@ -13,12 +14,12 @@ export default ({ app }: { app: Application }) => {
     // Transforms the raw string of req.body into json
     app.use(express.json());
 
-    // // TODO: Load API routes
-    // app.use(config.api.prefix, routes());
+    // Load API routes
+    app.use('/', routes());
 
     // catch 404 and forward to error handler
     app.use((req: Request, res: Response, next: NextFunction) => {
-        const err: HttpError = new HttpError('Not Found');
+        const err: HttpError = createError(404, 'Not Found');
         err.status = 404;
         next(err);
     });
