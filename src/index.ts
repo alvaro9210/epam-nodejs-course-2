@@ -1,14 +1,32 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 
 const app = express();
 const PORT = process.env.PORT || 4200;
 const userRouter = express.Router();
 const NOT_FOUND_ERROR = { status: 'failed', message: 'Not found' };
-const ACTIVE_USERS_FILTER = (user) => !user.isDeleted;
+const ACTIVE_USERS_FILTER = (user: IUser) => !user.isDeleted;
+
+export interface IGetUserRequest {
+    id?: number
+}
+
+export interface IGetUsersRequest {
+    loginSubstring?: string,
+    limit?: number
+}
+
+export interface IUser {
+    id: number;
+    login: string;
+    password: string;
+    age: number;
+    isDeleted: boolean;
+}
+
 
 // The validation rules for the User object.
-const userSchema = Joi.object()
+const UserSchema = Joi.object()
     .keys({
         id: Joi.number().required(),
         login: Joi.string().required(),
@@ -80,7 +98,7 @@ userRouter.get('/', (req, res) => {
 userRouter.get(
     '/users',
     (req, res) => {
-        const { loginSubstring, limit } = req.query;
+        const { loginSubstring, limit }: Requests.IGetUsersRequest = req.query;
         const suggestedUsers = getAutoSuggestUsers(loginSubstring, limit);
 
         return res.json(suggestedUsers.filter(ACTIVE_USERS_FILTER));
@@ -93,14 +111,14 @@ userRouter.get(
     (req, res) => {
         const { id } = req.params;
 
-        return res.json(users.filter(user => user.id == id));
+        return res.json(users.filter((user) => user.id == Number(id)));
     }
 );
 
 // Create a user
 userRouter.post(
     '/users',
-    validateUser(userSchema),
+    validateUser(UserSchema),
     (req, res) => {
         const user = req.body;
         users.push(user);
@@ -112,10 +130,10 @@ userRouter.post(
 // Create a user
 userRouter.put(
     '/users/:id',
-    validateUser(userSchema),
+    validateUser(UserSchema),
     (req, res) => {
         const { id } = req.params;
-        const userIndex = users.findIndex(user => user.id == id);
+        const userIndex = users.findIndex(user => user.id == Number(id));
         if (userIndex != -1) {
             // If user exists
             const updatedUser = req.body;
@@ -135,7 +153,7 @@ userRouter.delete(
     '/user/:id',
     (req, res) => {
         const { id } = req.params;
-        const userIndex = users.findIndex(user => user.id == id && !user.isDeleted);
+        const userIndex = users.findIndex(user => user.id == Number(id) && !user.isDeleted);
         if (userIndex != -1) {
             // If user exists
             users[userIndex].isDeleted = true;
@@ -163,8 +181,8 @@ function getAutoSuggestUsers(loginSubstring = '', limit = users.length) {
 }
 
 // Validates a user following the defined userSchema from Joi.
-function validateUser(schema) {
-    return (req, res, next) => {
+function validateUser(schema: typeof UserSchema) {
+    return (req: Request, res: Response, next: NextFunction) => {
         const { error } = schema.validate(req.body, {
             abortEarly: false,
             allowUnknown: false,
@@ -179,8 +197,8 @@ function validateUser(schema) {
 }
 
 // Builds the detailed error response to be returned in validateUser.
-function errorResponse(schemaErrors) {
-    const errors = schemaErrors.map((error) => {
+function errorResponse(schemaErrors?: Joi.ValidationErrorItem[]) {
+    const errors = schemaErrors?.map((error) => {
         let { path, message } = error;
         return { path, message };
     });
