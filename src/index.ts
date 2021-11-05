@@ -1,39 +1,14 @@
 import express, { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
+import UserSchema from './models/user';
+import * as IRequests from './interfaces/IRequests';
+import IUser from './interfaces/IUser';
 
 const app = express();
 const PORT = process.env.PORT || 4200;
 const userRouter = express.Router();
 const NOT_FOUND_ERROR = { status: 'failed', message: 'Not found' };
 const ACTIVE_USERS_FILTER = (user: IUser) => !user.isDeleted;
-
-export interface IGetUserRequest {
-    id?: number
-}
-
-export interface IGetUsersRequest {
-    loginSubstring?: string,
-    limit?: number
-}
-
-export interface IUser {
-    id: number;
-    login: string;
-    password: string;
-    age: number;
-    isDeleted: boolean;
-}
-
-
-// The validation rules for the User object.
-const UserSchema = Joi.object()
-    .keys({
-        id: Joi.number().required(),
-        login: Joi.string().required(),
-        password: Joi.string().alphanum().required(),
-        age: Joi.number().min(4).max(130).required(),
-        isDeleted: Joi.boolean().required(),
-    });
 
 // List of in-memory users.
 const users = [
@@ -98,7 +73,7 @@ userRouter.get('/', (req, res) => {
 userRouter.get(
     '/users',
     (req, res) => {
-        const { loginSubstring, limit }: Requests.IGetUsersRequest = req.query;
+        const { loginSubstring, limit }: IRequests.IGetUsersRequest = req.query;
         const suggestedUsers = getAutoSuggestUsers(loginSubstring, limit);
 
         return res.json(suggestedUsers.filter(ACTIVE_USERS_FILTER));
