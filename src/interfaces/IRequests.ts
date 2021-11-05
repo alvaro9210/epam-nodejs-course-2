@@ -1,10 +1,8 @@
-interface IGetUserRequest {
+export interface IGetUserRequest {
     id?: number
 }
 
-interface IGetUsersRequest {
+export interface IGetUsersRequest {
     loginSubstring?: string,
     limit?: number
 }
-
-export * as Requests;
