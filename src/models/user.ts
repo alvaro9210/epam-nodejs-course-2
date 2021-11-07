@@ -1,9 +1,11 @@
-import { Sequelize, DataTypes, Model, ModelAttributes } from 'sequelize';
+import Sequelize from 'sequelize';
+const { DataTypes } = Sequelize;
 
-const userModel: ModelAttributes = {
+const userModel: Sequelize.ModelAttributes = {
     id: {
         type: DataTypes.NUMBER,
-        allowNull: false
+        allowNull: false,
+        primaryKey: true,
     },
     login: {
         type: DataTypes.STRING,
@@ -30,9 +32,16 @@ const userModel: ModelAttributes = {
     }
 };
 
-export class User extends Model { }
+export class User extends Sequelize.Model {
+    public id: string | undefined;
+    public login: string | undefined;
+    public password: string | undefined;
+    public age: number | undefined;
+    public isDeleted: boolean | undefined;
+}
 
-export const registerUserModel = (sequelize: Sequelize) => User.init(userModel, {
+export const registerUserModel = (sequelize: Sequelize.Sequelize) => User.init(userModel, {
     sequelize: sequelize,
-    modelName: 'User'
+    modelName: 'user',
+    timestamps: false
 });
