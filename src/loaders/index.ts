@@ -3,6 +3,7 @@ import express from 'express';
 
 import databaseLoader from './database';
 import expressLoader from './express';
+import dependencyInjector from './dependencyInjector';
 
 export default async ({ expressApp }: { expressApp: express.Application }) => {
     // Establish connection to the databse
@@ -12,6 +13,9 @@ export default async ({ expressApp }: { expressApp: express.Application }) => {
         .authenticate()
         .then(() => console.log('Connection has been established successfully.'))
         .catch(err => console.error('Unable to connect to the database: ', err));
+
+    // Inject dependencies
+    dependencyInjector({ sequelize: database });
 
     // Load express
     await expressLoader({ app: expressApp });
