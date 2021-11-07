@@ -4,10 +4,8 @@ import { User } from '../models/user';
 @Service()
 export default class UserService {
 
-    async getAllUsers(): Promise<User[]> {
-        const users = await User.findAll();
-        users.forEach((user: User) => console.log(user.login));
+    getAllUsers = async (): Promise<User[]> => await User.findAll();
 
-        return users;
-    }
+    getUser = async (id: string): Promise<User | null> => await User.findByPk(id);
+
 }
