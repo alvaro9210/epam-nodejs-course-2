@@ -1,3 +1,4 @@
+import Sequelize from 'sequelize';
 import { Service } from 'typedi';
 import { IUserDTO } from '../interfaces/IUser';
 import { User } from '../models/user';
@@ -5,9 +6,18 @@ import { User } from '../models/user';
 @Service()
 export default class UserService {
 
-    getAllUsers = async (): Promise<User[]> =>
-        await (await User.findAll())
-            .filter(user => !user.isDeleted);
+    // Returns a list of users matching a specific substring in the 
+    // login property. Works as the autosuggest feature but using 
+    // Sequelize for that.
+    getAllUsers = async (loginSubstring = '', limit?: number): Promise<User[]> => await User.findAll({
+        where: {
+            login: {
+                [Sequelize.Op.substring]: loginSubstring
+            }
+        },
+        order: [['id', 'ASC']],
+        ...(limit != undefined && { limit: Number(limit) })
+    });
 
     getUser = async (id: string): Promise<User | null> => await User.findByPk(id);
 

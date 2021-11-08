@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 import { Container } from 'typedi';
+import { IGetUsersRequest } from '../../interfaces/IRequests';
 import { IUserDTO } from '../../interfaces/IUser';
 import UserService from '../../services/user';
 import * as middleware from '../middleware/user';
@@ -16,8 +17,10 @@ export default (app: Router) => {
     userRouter.get(
         '/',
         async (req: Request, res: Response, next: NextFunction) => {
+            const { loginSubstring, limit }: IGetUsersRequest = req.query;
+
             try {
-                const users = await userServiceInstance.getAllUsers();
+                const users = await userServiceInstance.getAllUsers(loginSubstring, limit);
                 return res.json([...users]);
             } catch (error) {
                 console.error(error);
@@ -91,7 +94,6 @@ export default (app: Router) => {
             }
         }
     );
-
 
     app.use('/users/', userRouter);
 };
