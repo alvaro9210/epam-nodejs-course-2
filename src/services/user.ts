@@ -13,4 +13,12 @@ export default class UserService {
         ...newUser,
         isDeleted: false
     });
+
+    updateUser = async (id: string, updatedUser: IUserDTO): Promise<User | undefined> => {
+        const user: User | null = await this.getUser(id);
+        user?.set({
+            ...updatedUser
+        });
+        return user?.save();
+    }
 }
