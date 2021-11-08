@@ -75,6 +75,22 @@ export default (app: Router) => {
         }
     );
 
+    // Delete a user (Soft-delete)
+    userRouter.delete(
+        '/:id',
+        async (req: Request, res: Response, next: NextFunction) => {
+            const { id }: { id?: string } = req.params;
+            try {
+                const wasDeleted = !! await userServiceInstance.deleteUser(id);
+                if (!wasDeleted) throw NOT_FOUND_ERROR;
+                return res.status(204).json({});
+            } catch (error) {
+                console.error(error);
+                return next(error);
+            }
+        }
+    );
+
 
     app.use('/users/', userRouter);
 };
