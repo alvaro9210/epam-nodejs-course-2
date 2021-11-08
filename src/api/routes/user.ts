@@ -20,7 +20,7 @@ export default (app: Router) => {
             const { loginSubstring, limit }: IGetUsersRequest = req.query;
 
             try {
-                const users = await userServiceInstance.getAllUsers(loginSubstring, limit);
+                const users = await userServiceInstance.getAll(loginSubstring, limit);
                 return res.json([...users]);
             } catch (error) {
                 console.error(error);
@@ -35,7 +35,7 @@ export default (app: Router) => {
         async (req: Request, res: Response, next: NextFunction) => {
             const { id }: { id?: string } = req.params;
             try {
-                const user = await userServiceInstance.getUser(id)
+                const user = await userServiceInstance.get(id)
                 if (!user) throw NOT_FOUND_ERROR;
                 return res.json(user);
             } catch (error) {
@@ -52,7 +52,7 @@ export default (app: Router) => {
         async (req: Request, res: Response, next: NextFunction) => {
             const userDTO: IUserDTO = req.body;
             try {
-                const user = await userServiceInstance.createUser(userDTO);
+                const user = await userServiceInstance.create(userDTO);
                 return res.json(user);
             } catch (error) {
                 console.error(error);
@@ -69,7 +69,7 @@ export default (app: Router) => {
             const { id }: { id?: string } = req.params;
             const userDTO: IUserDTO = req.body;
             try {
-                const updatedUser = await userServiceInstance.updateUser(id, userDTO);
+                const updatedUser = await userServiceInstance.update(id, userDTO);
                 if (!updatedUser) throw NOT_FOUND_ERROR;
                 return res.json(updatedUser);
             } catch (error) {
@@ -85,7 +85,7 @@ export default (app: Router) => {
         async (req: Request, res: Response, next: NextFunction) => {
             const { id }: { id?: string } = req.params;
             try {
-                const wasDeleted = !! await userServiceInstance.deleteUser(id);
+                const wasDeleted = !! await userServiceInstance.delete(id);
                 if (!wasDeleted) throw NOT_FOUND_ERROR;
                 return res.status(204).json({});
             } catch (error) {
