@@ -19,4 +19,5 @@ export default async ({ expressApp }: { expressApp: express.Application }) => {
 
     // Load express
     await expressLoader({ app: expressApp });
+    expressApp.listen(3000, () => console.log('API up and running'));
 };
