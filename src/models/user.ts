@@ -4,8 +4,8 @@ const { DataTypes } = Sequelize;
 const userModel: Sequelize.ModelAttributes = {
     id: {
         type: DataTypes.NUMBER,
-        allowNull: false,
         primaryKey: true,
+        autoIncrement: true,
     },
     login: {
         type: DataTypes.STRING,

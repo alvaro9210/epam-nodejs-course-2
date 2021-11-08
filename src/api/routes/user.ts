@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 import { Container } from 'typedi';
+import { IUserDTO } from '../../interfaces/IUser';
 import UserService from '../../services/user';
 
 const userRouter: Router = Router();
@@ -38,6 +39,23 @@ export default (app: Router) => {
             }
         }
     );
+
+    // Create a user
+    userRouter.post(
+        '/',
+        // validateUser(UserSchema),
+        async (req: Request, res: Response, next: NextFunction) => {
+            const userDTO: IUserDTO = req.body;
+            try {
+                const user = await userServiceInstance.createUser(userDTO);
+                return res.json(user);
+            } catch (error) {
+                console.error(error);
+                return next(error);
+            }
+        }
+    );
+
 
     app.use('/users/', userRouter);
 };

@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 import UserSchema from './api/middleware/user';
 import * as IRequests from './interfaces/IRequests';
-import IUser from './interfaces/IUser';
+import { IUser } from './interfaces/IUser';
 
 const app = express();
 const PORT = process.env.PORT || 4200;
