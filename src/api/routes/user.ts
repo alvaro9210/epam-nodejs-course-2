@@ -3,9 +3,10 @@ import createHttpError from 'http-errors';
 import { Container } from 'typedi';
 import { IUserDTO } from '../../interfaces/IUser';
 import UserService from '../../services/user';
+import * as middleware from '../middleware/user';
 
 const userRouter: Router = Router();
-const NOT_FOUND_ERROR = createHttpError(404, 'User not found');;
+const NOT_FOUND_ERROR = createHttpError(404, 'User not found');
 
 export default (app: Router) => {
     const userServiceInstance = Container.get(UserService);
@@ -44,7 +45,7 @@ export default (app: Router) => {
     // Create a user
     userRouter.post(
         '/',
-        // validateUser(UserSchema),
+        middleware.validateUser(),
         async (req: Request, res: Response, next: NextFunction) => {
             const userDTO: IUserDTO = req.body;
             try {
@@ -60,7 +61,7 @@ export default (app: Router) => {
     // Update a user
     userRouter.put(
         '/:id',
-        // validateUser(UserSchema),
+        middleware.validateUser(),
         async (req: Request, res: Response, next: NextFunction) => {
             const { id }: { id?: string } = req.params;
             const userDTO: IUserDTO = req.body;
