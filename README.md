@@ -1,5 +1,5 @@
-# epam-nodejs-course-2
-Homework 2 of EPAM's NodeJS course
+# epam-nodejs-course
+Homework 3 of EPAM's NodeJS course
 
 ## Instructions 
 1. Run `npm i` to install dependencies
