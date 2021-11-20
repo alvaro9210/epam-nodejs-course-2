@@ -7,7 +7,6 @@ export interface IGroup {
 }
 
 export interface IGroupDTO {
-    id: string;
     name: string;
     permissions: Array<Permission>;
 }
