@@ -3,8 +3,9 @@ const { DataTypes } = Sequelize;
 
 const groupModel: Sequelize.ModelAttributes = {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         primaryKey: true,
+        autoIncrement: true,
         allowNull: false
     },
     name: {
